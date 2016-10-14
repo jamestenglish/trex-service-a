@@ -14,9 +14,9 @@ node {
 		}
 		stage('Unit Test') {
 			def testResult = app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
-				sh 'whoami'
+				sh "wget 192.168.100.160:9393/test"
 			}
-			sh "wget 192.168.100.160:9393/test"
+			
 			echo testResult
 			sh 'ls -la'
 			//junit 'nose2-junit.xml'

@@ -1,21 +1,33 @@
 def registryTag = 'trex-demo-stage/service-a:latest'
+def dockerServer = 'tcp://192.168.100.160:2375'
 node {
 	stage('Checkout') {
 		checkout scm
 		sh 'ls -la'
+		sh "echo \"VERSION = ${env.BUILD_NUMBER}\" > version.py"
 	}
 	
 	def app = null
-	docker.withServer('tcp://192.168.100.160:2375') {
+	docker.withServer(dockerServer) {
 		
 		stage('Build Docker') {
 			app = docker.build "192.168.100.160:5000/${registryTag}"
 		}
 		stage('Unit Test') {
-			def testResult = app.withRun('-v "`pwd`":/code/results','./test.sh') { c ->
-				sh 'whoami'
+			
+			//sshagent(['ssh-cred-1']) {
+			//	def testResult = sh(script: "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 docker run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
+			//
+			//	echo testResult
+			//}
+			
+			app.withRun('-v "`pwd`":/code/results','/bin/bash ./test.sh') { c ->
+				sh "ls"
 			}
-			echo testResult
+			
+			//def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
+			
+			//echo testResult
 			sh 'ls -la'
 			//junit 'nose2-junit.xml'
 		}

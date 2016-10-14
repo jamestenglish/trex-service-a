@@ -20,17 +20,8 @@ node {
 				def testResult = sh(script: "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 cat nose2-junit.xml", returnStdout: true).trim()
 				echo testResult
 				sh "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 rm  nose2-junit.xml"
-				sh "echo \"${testResult}\" > nose2-junit.xml"
+				writeFile(file: "nose2-junit.xml", text: testResult)
 			}
-			
-			//app.withRun('-v "`pwd`":/code/results','/bin/bash ./test.sh') { c ->
-			///	sh "ls"
-			//}
-			
-			//def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
-			
-			//echo testResult
-			sh 'ls -la'
 			junit 'nose2-junit.xml'
 		}
 

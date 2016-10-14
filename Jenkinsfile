@@ -16,7 +16,7 @@ node {
 		stage('Unit Test') {
 			
 			sshagent(['ssh-cred-1']) {
-				sh "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 docker run -v \"`pwd`\":/code/results 192.168.100.160:5000/${registryTag} /bin/bash ./test.sh"
+				sh "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 docker run -v /home/englishja:/code/results 192.168.100.160:5000/${registryTag} /bin/bash ./test.sh"
 				def testResult = sh(script: "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 cat nose2-junit.xml", returnStdout: true).trim()
 				echo testResult
 				sh "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 rm  nose2-junit.xml"

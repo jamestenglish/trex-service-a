@@ -15,13 +15,13 @@ node {
 		}
 		stage('Unit Test') {
 			
-			//def testResult = app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
-			//	sh "wget 192.168.100.160:9393/test"
-			//}
+			app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
+				sh "wget 192.168.100.160:9393/test"
+			}
 			
-			def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
+			//def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
 			
-			echo testResult
+			//echo testResult
 			sh 'ls -la'
 			//junit 'nose2-junit.xml'
 		}

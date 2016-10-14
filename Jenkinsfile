@@ -19,7 +19,7 @@ node {
 			//	sh "wget 192.168.100.160:9393/test"
 			//}
 			
-			def testResult = sh(script: "docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
+			def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
 			
 			echo testResult
 			sh 'ls -la'

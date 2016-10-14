@@ -23,6 +23,19 @@ def v():
 def health():
     return 'healthy'
 
+@app.route('/test')
+def test():
+    is_testing = os.getenv('IS_TESTING', False)
+    
+    if not is_testing:
+        return "no"
+    try:
+        return send_from_directory('results', 'nose2-junit.xml')
+    finally:
+        import sys
+        sys.exit()
+
+
 if __name__ == '__main__':
     app.run(debug=False,host='0.0.0.0',port=8080)
 

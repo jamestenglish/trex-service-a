@@ -1,4 +1,5 @@
 def registryTag = 'trex-demo-stage/service-a:latest'
+def prodRegistryTag = 'trex-demo-prod/service-a:latest'
 def dockerServer = 'tcp://192.168.100.160:2375'
 node {
 	stage('Checkout') {
@@ -35,7 +36,29 @@ node {
 				sh "ssh -o StrictHostKeyChecking=no -l saicadm 192.168.100.80 \"sudo docker login -u test -e test@test.com -p ${token} 172.30.122.20:5000 && sudo docker push 172.30.122.20:5000/${registryTag}\""
 			}
 		}
-
+		
+		stage('Integration Test') {
+			def maxCount = 0
+			while(maxCount <= 60) {
+				def result = sh(script: "curl http://service-a-trex-demo-stage.router.default.svc.cluster.local/v", returnStdout: true).trim() 
+				if(result == "${env.BUILD_NUMBER}") {
+					break
+				}
+				sleep(1)
+			}
+			if(maxCount >= 60) {
+				sh 'false'
+			}
+		}
+		
+		stage('Prod Environment') {
+			sshagent(['ssh-creds']) {
+				sh "ssh -o StrictHostKeyChecking=no -l saicadm 192.168.100.80 sudo docker tag -f 192.168.100.160:5000/${registryTag} 172.30.122.20:5000/${prodRegistryTag}"
+				def token = sh(script: 'ssh -o StrictHostKeyChecking=no -l saicadm 192.168.100.80 oc whoami -t', returnStdout: true).trim()
+				echo token
+				sh "ssh -o StrictHostKeyChecking=no -l saicadm 192.168.100.80 \"sudo docker login -u test -e test@test.com -p ${token} 172.30.122.20:5000 && sudo docker push 172.30.122.20:5000/${prodRegistryTag}\""
+			}
+		}
 
 	}
 }

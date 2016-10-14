@@ -16,6 +16,7 @@ node {
 		stage('Unit Test') {
 			
 			app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
+				sleep 60
 				sh "wget 192.168.100.160:9393/test"
 			}
 			

@@ -1,4 +1,5 @@
 def registryTag = 'trex-demo-stage/service-a:latest'
+def dockerServer = 'tcp://192.168.100.160:2375'
 node {
 	stage('Checkout') {
 		checkout scm
@@ -7,15 +8,18 @@ node {
 	}
 	
 	def app = null
-	docker.withServer('tcp://192.168.100.160:2375') {
+	docker.withServer(dockerServer) {
 		
 		stage('Build Docker') {
 			app = docker.build "192.168.100.160:5000/${registryTag}"
 		}
 		stage('Unit Test') {
-			def testResult = app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
-				sh "wget 192.168.100.160:9393/test"
-			}
+			
+			//def testResult = app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
+			//	sh "wget 192.168.100.160:9393/test"
+			//}
+			
+			def testResult = sh(script: "docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
 			
 			echo testResult
 			sh 'ls -la'

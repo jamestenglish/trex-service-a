@@ -15,10 +15,16 @@ node {
 		}
 		stage('Unit Test') {
 			
-			app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
-				sleep 60
-				sh "wget 192.168.100.160:9393/test"
+			sshagent(['ssh-cred-1']) {
+				def testResult = sh(script: "ssh -o StrictHostKeyChecking=no -l englishja 192.168.100.160 docker run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
+			
+				echo testResult
 			}
+			
+			//app.withRun('-p 9393:8080 -e IS_TESTING=True','./test.sh') { c ->
+			//	sleep 60
+			//	sh "wget 192.168.100.160:9393/test"
+			//}
 			
 			//def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
 			

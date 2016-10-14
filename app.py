@@ -6,16 +6,16 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Flask Dockerized'
+    return 'Trex Service A'
 
 @app.route('/demo')
 def demo():
     time.sleep(1)
-    return ANSWER
+    return str(ANSWER)
 
 @app.route('/v')
 def v():
-    return VERSION
+    return str(VERSION)
 
 @app.route('/health')
 def health():

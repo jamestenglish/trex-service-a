@@ -23,9 +23,9 @@ node {
 				sh "echo \"${testResult}\" > nose2-junit.xml"
 			}
 			
-			app.withRun('-v "`pwd`":/code/results','/bin/bash ./test.sh') { c ->
-				sh "ls"
-			}
+			//app.withRun('-v "`pwd`":/code/results','/bin/bash ./test.sh') { c ->
+			///	sh "ls"
+			//}
 			
 			//def testResult = sh(script: "sudo docker -H ${dockerServer} run 192.168.100.160:5000/${registryTag} ./test.sh", returnStdout: true).trim()
 			
